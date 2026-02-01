@@ -1,0 +1,21 @@
+# Don't copy the following files and folders to docker images (e.g. in case of COPY . /opt/app)
+
+# folders
+.github/
+.cache/
+.mypy_cache/
+.venv/
+cache/
+docker/
+docs/
+logs/
+**/tests/
+venv/
+# setting files
+.env
+settings.env
+
+# test leftovers
+*/.pytest_cache/
+*/.coverage
+.coverage.*

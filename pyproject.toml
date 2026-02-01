@@ -1,0 +1,233 @@
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[project]
+name = "Python-DevContainer"
+description = "Sample project using python, uv and an Alpine based DevContainer"
+version = "0.0.0"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = []
+requires-python = ">=3.10"
+
+[dependency-groups]
+docs = [
+  "sphinx~=7.2",
+  "myst-parser~=3.0",
+  "sphinxcontrib-images~=0.9",
+  "sphinx-pyproject~=0.3",
+  "sphinx-autodoc2~=0.5",
+  "shibuya>=2024.3.1",
+  "sphinx-copybutton~=0.5",
+  "sphinx-design~=0.6",
+  "sphinx-tabs~=3.4",
+]
+test = [
+  "pytest~=8.0",
+  "pytest-asyncio~=0.24",
+  "pytest-cov~=5.0",
+  "pytest-dotenv~=0.5",
+  "pytest-env~=1.1",
+  "pytest-rerunfailures~=14.0",
+  "pytest-xdist~=3.5",
+  "tblib~=3.0",
+]
+
+[project.scripts]
+app = "example.main:entrypoint"
+
+[project.urls]
+Documentation = "https://readthedocs.org"
+Repository = "https://github.com/macgeneral/python-devcontainer.git"
+Issues = "https://github.com/macgeneral/python-devcontainer/issues"
+
+[tool.uv.sources]
+example = { path = "src/example", editable = true }
+
+[tool.hatch.build.targets.wheel]
+  packages = ["src/example"]
+
+[tool.pyright]
+include = ["src"]
+defineConstant = { DEBUG = true }
+reportMissingImports = true
+reportMissingTypeStubs = true
+
+[tool.sphinx-pyproject]
+todo_include_todos = true
+apidoc_separate_modules = true
+language = "en"
+package_root = "sphinx_pyproject"
+extensions = [
+  "myst_parser",
+  "sphinx.ext.intersphinx",
+  "sphinx.ext.napoleon",
+  "sphinx.ext.todo",
+  "autodoc2",
+  "sphinx_copybutton",
+  "sphinx_design",
+  "sphinx_tabs.tabs",
+]
+autodoc2_packages = ["../../app/src/"]
+autodoc2_output_dir = "_apidocs"
+autodoc2_render_plugin = "myst"
+autodoc2_index_template = """
+API Reference
+=============
+
+This page contains auto-generated API reference documentation.
+
+.. toctree::
+  :titlesonly:
+{% for package in top_level %}
+  {{ package }}
+{%- endfor %}
+"""
+gitstamp_fmt = "%d %b %Y"
+templates_path = ["_templates"]
+html_static_path = ["_static", "_include"]
+source_suffix = [".md", ".rst"]
+master_doc = "index"
+suppress_warnings = ["image.nonlocal_uri"]
+html_theme = "shibuya"
+html_css_files = []
+html_show_sourcelink = true
+toctree_plus_types = [
+  "class",
+  "confval",
+  "data",
+  "directive",
+  "enum",
+  "exception",
+  "flag",
+  "function",
+  "namedtuple",
+  "protocol",
+  "role",
+  "typeddict",
+]
+add_module_names = false
+hide_none_rtype = true
+all_typevars = true
+overloads_location = "bottom"
+html_codeblock_linenos_style = "table"
+autodoc_exclude_members = [
+  "__dict__",
+  "__class__",
+  "__dir__",
+  "__weakref__",
+  "__module__",
+  "__annotations__",
+  "__orig_bases__",
+  "__parameters__",
+  "__subclasshook__",
+  "__init_subclass__",
+  "__attrs_attrs__",
+  "__init__",
+  "__new__",
+  "__getnewargs__",
+  "__abstractmethods__",
+  "__hash__",
+]
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".git-rewrite",
+  ".hg",
+  ".ipynb_checkpoints",
+  ".mypy_cache",
+  ".nox",
+  ".pants.d",
+  ".pyenv",
+  ".pytest_cache",
+  ".pytype",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  ".vscode",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "site-packages",
+  "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.12
+target-version = "py312"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.coverage.run]
+parallel = true
+# important if coverage is calculated wrong!
+# values: multiprocessing, gevent, greenlet, or eventlet, default: thread
+# see: https://coverage.readthedocs.io/en/latest/config.html#run-concurrency
+concurrency = ["thread"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "if self.debug:",
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+]
+fail_under = 90
+ignore_errors = true
+skip_covered = false
+
+[tool.coverage.html]
+directory = "docs/source/_include/developer/coverage"
+
+[tool.pytest.ini_options]
+pythonpath = ". src"
+python_classes = ["Test"]
+python_functions = ["test_"]
+python_files = ["test_*.py"]
+env_files = [".env"]
+addopts = "-n auto --strict-markers --cov src --cov-report term-missing:skip-covered --cov-report html"
+markers = [
+  "slow: mark tests as slow (deselect with '-m \"not slow\"')",
+  "serial",
+]
+required_plugins = ["pytest-cov", "pytest-dotenv", "pytest-env", "pytest-xdist"]
+# TODO: define additional environment variables for testing
+env = ["RUN_ENV=test"]
+asyncio_default_fixture_loop_scope = "function" # Avoids warning messages when running tests

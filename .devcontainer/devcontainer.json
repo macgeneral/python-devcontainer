@@ -1,0 +1,93 @@
+{
+  "name": "Docker Dev Container",
+  "dockerComposeFile": "${localWorkspaceFolder}/compose.yml",
+  "service": "app",
+  "workspaceFolder": "/opt/app/workspaces/${localWorkspaceFolderBasename}",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/opt/app/workspaces/${localWorkspaceFolderBasename},type=bind",
+    "source=${localWorkspaceFolder}/.devcontainer/config/.zshrc,target=/opt/app/.zshrc,type=bind",
+    "source=${localWorkspaceFolder}/.devcontainer/cache,target=/opt/app/cache,type=bind",
+    "source=${localWorkspaceFolder}/.devcontainer/cache/vscode,target=/opt/app/.vscode-server,type=bind",
+    "source=userCache,target=/opt/app/.cache,type=volume"
+  ],
+  "postAttachCommand": "uv sync --active --all-extras --all-groups",
+  "remoteUser": "worker",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "astral-sh.ty",
+        "charliermarsh.ruff",
+        "esbenp.prettier-vscode",
+        "Gruntfuggly.todo-tree",
+        "ms-python.python",
+        "tamasfe.even-better-toml"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/app/venv/bin/python",
+        "remote.downloadExtensionsLocally": true,
+        // general settings
+        "autoDocstring.docstringFormat": "google-notypes",
+        "dotenv.enableAutocloaking": true,
+        "editor.formatOnSave": true,
+        "editor.renderWhitespace": "boundary",
+        "editor.rulers": [
+          88,
+          100,
+          120
+        ],
+        "editor.tabSize": 2,
+        "editor.useTabStops": false,
+        "editor.wordWrapColumn": 88,
+        "files.associations": {
+          ".env*": "dotenv",
+          "artifactory.env": "dotenv",
+          "settings.env": "dotenv"
+        },
+        "files.trimTrailingWhitespace": true,
+        "git.autofetch": "all",
+        "github-security.dependabot.showDevelopmentDependencies": true,
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.include": [
+          "src/**.py",
+          "docs/**.py"
+        ],
+        "python.analysis.autoImportCompletions": true,
+        "python.analysis.importFormat": "absolute",
+        "python.analysis.autoFormatStrings": true,
+        "python.analysis.inlayHints.variableTypes": true,
+        "python.analysis.inlayHints.functionReturnTypes": true,
+        "python.analysis.inlayHints.callArgumentNames": "off",
+        "python.analysis.inlayHints.pytestParameters": true,
+        "python.analysis.fixAll": [
+          "source.convertImportFormat"
+        ],
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": [
+          "--no-cov",
+          "--pdb",
+          "-s",
+          "-vv"
+        ],
+        "telemetry.enableTelemetry": false,
+        "telemetry.telemetryLevel": "off",
+        "[css, html, javascript, json, typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[markdown]": {
+          "files.trimTrailingWhitespace": false
+        },
+        "[python]": {
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "always",
+            "source.organizeImports": "always"
+          },
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.tabSize": 4
+        },
+        "[toml]": {
+          "editor.defaultFormatter": "tamasfe.even-better-toml"
+        }
+      }
+    }
+  }
+}

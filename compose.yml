@@ -1,0 +1,27 @@
+services:
+  app:
+    image: ${COMPOSE_PROJECT_NAME}-app:${DOCKER_TAG:-devcontainer}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${DOCKER_TARGET:-dev_image}
+      args:
+        COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+        UID: ${UID}
+        GID: ${GID}
+    env_file:
+      - .env
+    user: "${UID}:${GID}"
+    volumes:
+      - type: bind
+        source: src
+        target: /opt/app/src
+      - type: bind
+        source: pyproject.toml
+        target: /opt/app/pyproject.toml
+      - type: bind
+        source: README.md
+        target: /opt/app/README.md
+      - type: bind
+        source: uv.lock
+        target: /opt/app/uv.lock
