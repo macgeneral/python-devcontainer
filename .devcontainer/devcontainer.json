@@ -16,6 +16,9 @@
     "source=vscodeCache,target=/opt/app/.vscode-server,type=volume"
   ],
   "postAttachCommand": "pre-commit install && uv sync",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/opt/app/venv/bin"
+  },
   "remoteUser": "worker",
   "customizations": {
     "vscode": {
