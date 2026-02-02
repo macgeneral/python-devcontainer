@@ -19,12 +19,12 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "astral-sh.ty",
-        "charliermarsh.ruff",
-        "esbenp.prettier-vscode",
-        "Gruntfuggly.todo-tree",
-        "ms-python.python",
-        "tamasfe.even-better-toml"
+        "astral-sh.ty@2026.8.0",
+        "charliermarsh.ruff@2026.34.0",
+        "esbenp.prettier-vscode@12.3.0",
+        "Gruntfuggly.todo-tree@0.0.226",
+        "ms-python.python@2026.0.0",
+        "tamasfe.even-better-toml@0.21.2"
       ]
     },
     "settings": {
