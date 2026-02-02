@@ -120,6 +120,7 @@ RUN mkdir -p \
 
 ENV \
   TERM="xterm" \
+  RUFF_CACHE_DIR="${BASE_DIR}/.cache/ruff" \
   UV_LINK_MODE=copy
 
 CMD sleep infinity
