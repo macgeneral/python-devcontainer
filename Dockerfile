@@ -127,7 +127,8 @@ RUN mkdir -p \
 ENV \
   RUFF_CACHE_DIR="${BASE_DIR}/.cache/ruff" \
   TERM="xterm" \
-  UV_LINK_MODE=copy
+  UV_LINK_MODE=copy \
+  WORKON_HOME="${VIRTUAL_ENV}"
 
 CMD sleep infinity
 

@@ -80,8 +80,6 @@
       "editor.formatOnSave": false,
       "editor.formatOnType": false,
       "python.analysis.autoImportCompletions": true,
-      "python.venvPath": "/opt/app/venv/",
-      "python.terminal.activateEnvironment": true,
       "dev.containers.experimentalLockfile": true
     }
   }
