@@ -15,10 +15,6 @@
     "source=vscodeCache,target=/opt/app/.vscode-server,type=volume"
   ],
   "postAttachCommand": "pre-commit install && uv sync",
-  // fix VSCode not finding the venv pt. 1
-  "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/opt/app/venv/bin/"
-  },
   "remoteUser": "worker",
   "customizations": {
     "vscode": {
@@ -84,8 +80,7 @@
       "editor.formatOnSave": false,
       "editor.formatOnType": false,
       "python.analysis.autoImportCompletions": true,
-      // fix VSCode not finding the venv pt. 2
-      "python.pythonPath": "/opt/app/venv/bin/python",
+      "python.venvPath": "/opt/app/venv/",
       "python.terminal.activateEnvironment": true,
       "dev.containers.experimentalLockfile": true
     }
