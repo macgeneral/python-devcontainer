@@ -50,7 +50,10 @@ WORKDIR "${BASE_DIR}"
 
 
 FROM base_image AS build_image
-ENV UV_COMPILE_BYTECODE=true
+ENV \
+  UV_COMPILE_BYTECODE=1 \
+  UV_PROJECT_ENVIRONMENT=${VIRTUAL_ENV}
+
 # install uv
 COPY --from=ghcr.io/astral-sh/uv:latest --link /uv /uvx /usr/local/bin/
 # add requirements for dynamic versioning support
@@ -63,12 +66,13 @@ USER ${USER}
 # setup the app's virtual environment
 RUN --mount=type=cache,uid=${UID},gid=${GID},target="${BASE_DIR}/.cache" \
   python3 -m venv --symlinks --without-pip "${VIRTUAL_ENV}"
-# install app dependencies
+# install app dependencies, continue building the DevContainer if it fails
 RUN \
   --mount=type=bind,source=pyproject.toml,target="${BASE_DIR}/pyproject.toml" \
   --mount=type=bind,source=README.md,target="${BASE_DIR}/README.md" \
   --mount=type=bind,source=uv.lock,target="${BASE_DIR}/uv.lock" \
-  uv sync --active
+  uv sync || true
+
 
 FROM build_image AS dev_image
 # install ruff & ty
@@ -78,41 +82,38 @@ COPY --from=ghcr.io/astral-sh/ty:latest --link /ty /usr/local/bin/
 USER root
 RUN --mount=type=cache,target=/etc/apk/cache \
   apk add \
-    bind-tools \
-    curl \
-    fzf \
-    gnupg \
-    htop \
-    iproute2 \
-    iputils-ping \
-    jq \
-    lsof \
-    net-tools \
-    oh-my-zsh \
-    pre-commit \
-    procps \
-    shadow \
-    shellcheck \
-    sudo \
-    the_silver_searcher \
-    vim \
-    wget \
-    zsh
+  bind-tools \
+  curl \
+  fzf \
+  gnupg \
+  htop \
+  jq \
+  oh-my-zsh \
+  pre-commit \
+  procps \
+  shadow \
+  sudo \
+  the_silver_searcher \
+  zsh \
+  zsh-vcs
 
 # switch default shell to zsh
 RUN chsh -s $(which zsh) ${USER}
 
 # allow sudo for local developer
 RUN echo "${USER} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USER} \
-    && chmod 0440 /etc/sudoers.d/${USER}
+  && chmod 0440 /etc/sudoers.d/${USER}
+
+# ensure the "home" folder is writable
+RUN chown ${UID}:${GID} "${BASE_DIR}"
 
 USER ${USER}
 
 # create mountpoints so that mounted volumes have the correct assigned permissions
 RUN mkdir -p \
-  "${BASE_DIR}/.cache" "${BASE_DIR}/cache" \
-  "${BASE_DIR}/.vscode-server/{extensions" "${BASE_DIR}/extensionsCache" \
-  "${BASE_DIR}/workspaces/${COMPOSE_PROJECT_NAME}"
+  "${BASE_DIR}/cache" \
+  "${BASE_DIR}/.cache" \
+  "${BASE_DIR}/.vscode-server"
 
 ENV \
   TERM="xterm" \
@@ -138,4 +139,4 @@ CMD [ "app" ]
 
 # TODO: update the healthcheck according to your needs
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD pgrep -f "app" > /dev/null || exit 1
+  CMD pgrep -f "app" > /dev/null || exit 1

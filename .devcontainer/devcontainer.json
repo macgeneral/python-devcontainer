@@ -1,16 +1,22 @@
 {
   "name": "Docker Dev Container",
-  "dockerComposeFile": "${localWorkspaceFolder}/compose.yml",
-  "service": "app",
+  "build": {
+    "context": "../",
+    "dockerfile": "../Dockerfile",
+    "image": "python-devcontainer:dev",
+    "pull": false,
+    "target": "dev_image"
+  },
   "workspaceFolder": "/opt/app/workspaces/${localWorkspaceFolderBasename}",
   "mounts": [
-    "source=${localWorkspaceFolder},target=/opt/app/workspaces/${localWorkspaceFolderBasename},type=bind",
+    "source=${localWorkspaceFolder},target=/opt/app/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
     "source=${localWorkspaceFolder}/.devcontainer/config/.zshrc,target=/opt/app/.zshrc,type=bind",
-    "source=${localWorkspaceFolder}/.devcontainer/cache,target=/opt/app/cache,type=bind",
-    "source=${localWorkspaceFolder}/.devcontainer/cache/vscode,target=/opt/app/.vscode-server,type=bind",
-    "source=userCache,target=/opt/app/.cache,type=volume"
+    // container caches
+    "source=userCache,target=/opt/app/cache,type=volume",
+    "source=linuxCache,target=/opt/app/.cache,type=volume",
+    "source=vscodeCache,target=/opt/app/.vscode-server,type=volume"
   ],
-  "postAttachCommand": "uv sync --active --all-extras --all-groups",
+  "postAttachCommand": "uv sync --all-extras --all-groups",
   "remoteUser": "worker",
   "customizations": {
     "vscode": {
@@ -21,73 +27,62 @@
         "Gruntfuggly.todo-tree",
         "ms-python.python",
         "tamasfe.even-better-toml"
+      ]
+    },
+    "settings": {
+      // basic settings
+      "files.autoSave": "afterDelay",
+      "files.autoSaveDelay": 5000,
+      "editor.rulers": [
+        88,
+        100,
+        120
       ],
-      "settings": {
-        "python.defaultInterpreterPath": "/opt/app/venv/bin/python",
-        "remote.downloadExtensionsLocally": true,
-        // general settings
-        "autoDocstring.docstringFormat": "google-notypes",
-        "dotenv.enableAutocloaking": true,
-        "editor.formatOnSave": true,
-        "editor.renderWhitespace": "boundary",
-        "editor.rulers": [
-          88,
-          100,
-          120
-        ],
+      "editor.tabSize": 2,
+      "[html]": {
         "editor.tabSize": 2,
-        "editor.useTabStops": false,
-        "editor.wordWrapColumn": 88,
-        "files.associations": {
-          ".env*": "dotenv",
-          "artifactory.env": "dotenv",
-          "settings.env": "dotenv"
+        "editor.formatOnSave": false
+      },
+      "[python]": {
+        "editor.tabSize": 4,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.formatOnType": true,
+        "editor.wordBasedSuggestions": "off",
+        "editor.defaultFormatter": "charliermarsh.ruff"
+      },
+      "[json]": {
+        "editor.quickSuggestions": {
+          "strings": true
         },
-        "files.trimTrailingWhitespace": true,
-        "git.autofetch": "all",
-        "github-security.dependabot.showDevelopmentDependencies": true,
-        "python.analysis.typeCheckingMode": "basic",
-        "python.analysis.include": [
-          "src/**.py",
-          "docs/**.py"
-        ],
-        "python.analysis.autoImportCompletions": true,
-        "python.analysis.importFormat": "absolute",
-        "python.analysis.autoFormatStrings": true,
-        "python.analysis.inlayHints.variableTypes": true,
-        "python.analysis.inlayHints.functionReturnTypes": true,
-        "python.analysis.inlayHints.callArgumentNames": "off",
-        "python.analysis.inlayHints.pytestParameters": true,
-        "python.analysis.fixAll": [
-          "source.convertImportFormat"
-        ],
-        "python.testing.pytestEnabled": true,
-        "python.testing.pytestArgs": [
-          "--no-cov",
-          "--pdb",
-          "-s",
-          "-vv"
-        ],
-        "telemetry.enableTelemetry": false,
-        "telemetry.telemetryLevel": "off",
-        "[css, html, javascript, json, typescript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "[markdown]": {
-          "files.trimTrailingWhitespace": false
-        },
-        "[python]": {
-          "editor.codeActionsOnSave": {
-            "source.fixAll": "always",
-            "source.organizeImports": "always"
-          },
-          "editor.defaultFormatter": "charliermarsh.ruff",
-          "editor.tabSize": 4
-        },
-        "[toml]": {
-          "editor.defaultFormatter": "tamasfe.even-better-toml"
-        }
-      }
+        "editor.tabSize": 2,
+        "editor.suggest.insertMode": "replace"
+      },
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "always"
+      },
+      "editor.insertSpaces": true,
+      "editor.detectIndentation": true,
+      "workbench.iconTheme": "material-icon-theme",
+      "editor.fontFamily": "Source Code Pro",
+      "editor.fontSize": 14,
+      // terminal settings
+      "terminal.integrated.fontFamily": "Source Code Pro for Powerline",
+      // telemetry
+      "telemetry.telemetryLevel": "off",
+    // git
+      "gitlens.advanced.messages": {
+        "suppressShowKeyBindingsNotice": true
+      },
+      "git.autofetch": true,
+      // misc
+      "htmlhint.options": {
+        "attr-lowercase": false
+      },
+      "editor.formatOnPaste": false,
+      "editor.formatOnSave": false,
+      "editor.formatOnType": false,
+      "python.analysis.autoImportCompletions": true,
+      "dev.containers.experimentalLockfile": true
     }
   }
 }
