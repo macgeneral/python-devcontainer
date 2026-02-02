@@ -114,7 +114,6 @@ USER ${USER}
 
 # create mountpoints so that mounted volumes have the correct assigned permissions
 RUN mkdir -p \
-  "${BASE_DIR}/cache" \
   "${BASE_DIR}/.cache" \
   "${BASE_DIR}/.vscode-server"
 

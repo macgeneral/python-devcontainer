@@ -2,7 +2,7 @@
 ZSH=/usr/share/oh-my-zsh
 
 # move the history file into a cacheable folder
-HISTFILE=/opt/app/cache/.zsh_history
+HISTFILE=/opt/app/.cache/.zsh_history
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
