@@ -64,7 +64,10 @@ USER root
 RUN --mount=type=cache,target=/etc/apk/cache \
   apk add git make
 RUN --mount=type=cache,target=/root/.cache \
-  uv pip install --system uv-dynamic-versioning debugpy
+  uv pip install --system \
+    debugpy \
+    pre-commit \
+    uv-dynamic-versioning
 USER ${USER}
 # setup the app's virtual environment
 RUN --mount=type=cache,uid=${UID},gid=${GID},target="${BASE_DIR}/.cache" \
@@ -85,6 +88,7 @@ COPY --from=ghcr.io/astral-sh/ty:latest --link /ty /usr/local/bin/
 USER root
 RUN --mount=type=cache,target=/etc/apk/cache \
   apk add \
+    bash \
     bind-tools \
     ca-certificates \
     curl \
@@ -93,8 +97,8 @@ RUN --mount=type=cache,target=/etc/apk/cache \
     gnupg \
     htop \
     jq \
+    libstdc++ \
     oh-my-zsh \
-    pre-commit \
     procps \
     rsync \
     shadow \
@@ -117,8 +121,8 @@ USER ${USER}
 
 # create mountpoints so that mounted volumes have the correct assigned permissions
 RUN mkdir -p \
-  "${BASE_DIR}/.cache" \
-  "${BASE_DIR}/.vscode-server"
+    "${BASE_DIR}/.cache" \
+    "${BASE_DIR}/.vscode-server"
 
 ENV \
   RUFF_CACHE_DIR="${BASE_DIR}/.cache/ruff" \

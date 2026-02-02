@@ -7,16 +7,18 @@
     "pull": false,
     "target": "dev_image"
   },
-  "workspaceFolder": "/opt/app/workspaces/${localWorkspaceFolderBasename}",
   "mounts": [
-    "source=${localWorkspaceFolder},target=/opt/app/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
     "source=${localWorkspaceFolder}/.devcontainer/config/.zshrc,target=/opt/app/.zshrc,type=bind",
     // container caches
     "source=linuxCache,target=/opt/app/.cache,type=volume",
+    // avoid reinstalling all extensions on each launch
     "source=vscodeCache,target=/opt/app/.vscode-server,type=volume"
   ],
   "postAttachCommand": "pre-commit install && uv sync",
-  "postCreateCommand": "source /opt/app/venv/bin/activate",
+  // fix VSCode not finding the venv pt. 1
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/opt/app/venv/bin/"
+  },
   "remoteUser": "worker",
   "customizations": {
     "vscode": {
@@ -82,6 +84,9 @@
       "editor.formatOnSave": false,
       "editor.formatOnType": false,
       "python.analysis.autoImportCompletions": true,
+      // fix VSCode not finding the venv pt. 2
+      "python.pythonPath": "/opt/app/venv/bin/python",
+      "python.terminal.activateEnvironment": true,
       "dev.containers.experimentalLockfile": true
     }
   }
