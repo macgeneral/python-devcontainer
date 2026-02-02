@@ -83,7 +83,9 @@ USER root
 RUN --mount=type=cache,target=/etc/apk/cache \
   apk add \
   bind-tools \
+  ca-certificates \
   curl \
+  github-cli \
   fzf \
   gnupg \
   htop \
@@ -91,6 +93,7 @@ RUN --mount=type=cache,target=/etc/apk/cache \
   oh-my-zsh \
   pre-commit \
   procps \
+  rsync \
   shadow \
   sudo \
   the_silver_searcher \
