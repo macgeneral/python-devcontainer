@@ -15,7 +15,7 @@
     "source=linuxCache,target=/opt/app/.cache,type=volume",
     "source=vscodeCache,target=/opt/app/.vscode-server,type=volume"
   ],
-  "postAttachCommand": "pre-commit install && uv sync --all-extras --all-groups",
+  "postAttachCommand": "pre-commit install && uv sync",
   "remoteUser": "worker",
   "customizations": {
     "vscode": {

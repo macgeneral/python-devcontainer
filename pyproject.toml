@@ -43,6 +43,9 @@ Documentation = "https://readthedocs.org"
 Repository = "https://github.com/macgeneral/python-devcontainer.git"
 Issues = "https://github.com/macgeneral/python-devcontainer/issues"
 
+[tool.uv]
+default-groups = ["docs", "test"]
+
 [tool.uv.sources]
 example = { path = "src/example", editable = true }
 

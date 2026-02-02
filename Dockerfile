@@ -28,7 +28,7 @@ RUN --mount=type=cache,target=/etc/apk/cache \
   apk add procps-ng
 
 # remove pip from the image (uv will be installed in the build stage below)
-RUN pip3 uninstall pip -y
+RUN pip3 uninstall -y pip setuptools
 
 # Create the base layout for the application
 #  /opt/app/
@@ -74,7 +74,7 @@ RUN \
   --mount=type=bind,source=pyproject.toml,target="${BASE_DIR}/pyproject.toml" \
   --mount=type=bind,source=README.md,target="${BASE_DIR}/README.md" \
   --mount=type=bind,source=uv.lock,target="${BASE_DIR}/uv.lock" \
-  uv sync || true
+  uv sync --no-default-groups || true
 
 
 FROM build_image AS dev_image
