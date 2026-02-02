@@ -27,6 +27,9 @@ ARG \
 RUN --mount=type=cache,target=/etc/apk/cache \
   apk add procps-ng
 
+# remove pip from the image (uv will be installed in the build stage below)
+RUN pip3 uninstall pip -y
+
 # Create the base layout for the application
 #  /opt/app/
 #           mnt/    -> docker volumes (r/w)
@@ -52,7 +55,7 @@ WORKDIR "${BASE_DIR}"
 FROM base_image AS build_image
 ENV \
   UV_COMPILE_BYTECODE=1 \
-  UV_PROJECT_ENVIRONMENT=${VIRTUAL_ENV}
+  UV_PROJECT_ENVIRONMENT="${VIRTUAL_ENV}"
 
 # install uv
 COPY --from=ghcr.io/astral-sh/uv:latest --link /uv /uvx /usr/local/bin/
