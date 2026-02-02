@@ -82,23 +82,23 @@ COPY --from=ghcr.io/astral-sh/ty:latest --link /ty /usr/local/bin/
 USER root
 RUN --mount=type=cache,target=/etc/apk/cache \
   apk add \
-  bind-tools \
-  ca-certificates \
-  curl \
-  github-cli \
-  fzf \
-  gnupg \
-  htop \
-  jq \
-  oh-my-zsh \
-  pre-commit \
-  procps \
-  rsync \
-  shadow \
-  sudo \
-  the_silver_searcher \
-  zsh \
-  zsh-vcs
+    bind-tools \
+    ca-certificates \
+    curl \
+    github-cli \
+    fzf \
+    gnupg \
+    htop \
+    jq \
+    oh-my-zsh \
+    pre-commit \
+    procps \
+    rsync \
+    shadow \
+    sudo \
+    the_silver_searcher \
+    zsh \
+    zsh-vcs
 
 # switch default shell to zsh
 RUN chsh -s $(which zsh) ${USER}
@@ -118,8 +118,8 @@ RUN mkdir -p \
   "${BASE_DIR}/.vscode-server"
 
 ENV \
-  TERM="xterm" \
   RUFF_CACHE_DIR="${BASE_DIR}/.cache/ruff" \
+  TERM="xterm" \
   UV_LINK_MODE=copy
 
 CMD sleep infinity
