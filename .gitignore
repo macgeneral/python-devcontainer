@@ -1,5 +1,7 @@
 # exclude VSCode workspace settings
 .vscode/settings.json
+# exclude IntelliJ settings
+.idea
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
