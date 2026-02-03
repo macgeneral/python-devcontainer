@@ -28,8 +28,8 @@ RUN --mount=type=cache,target=/etc/apk/cache \
   apk add procps-ng
 
 # set timezone
-RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
-  && echo ${TZ} > /etc/timezone
+RUN ln -snf "/usr/share/zoneinfo/${TZ}" /etc/localtime \
+  && echo "${TZ}" > /etc/timezone
 
 # remove pip from the image (uv will be installed in the build stage below)
 RUN pip3 uninstall -y pip setuptools
