@@ -13,7 +13,7 @@ ENV \
 # Python specific environment variables
 ENV VIRTUAL_ENV="${BASE_DIR}/venv"
 ENV \
-  PATH="${VIRTUAL_ENV}/bin:${BASE_DIR}/.local/bin:${PATH}" \
+  PATH="${VIRTUAL_ENV}/bin:${PATH}" \
   PYTHONDONTWRITEBYTECODE=1 \
   PYTHONPATH="${BASE_DIR}/src" \
   PYTHONUNBUFFERED=1
@@ -58,6 +58,7 @@ WORKDIR "${BASE_DIR}"
 
 FROM base_image AS build_image
 ENV \
+  PATH="${PATH}:${BASE_DIR}/.local/bin" \
   UV_COMPILE_BYTECODE=1 \
   UV_LINK_MODE=copy \
   UV_PROJECT_ENVIRONMENT="${VIRTUAL_ENV}"
