@@ -91,22 +91,25 @@ FROM build_image AS dev_image
 USER root
 RUN --mount=type=cache,target=/etc/apk/cache \
   apk add \
+    # required for VSCode
     bash \
-    bind-tools \
-    ca-certificates \
     curl \
-    github-cli \
-    fzf \
     gnupg \
+    libstdc++ \
+    rsync \
+    # allow sudo inside the DevContainer
+    sudo \
+    # optional cli tools
+    bind-tools \
     htop \
     jq \
-    libstdc++ \
-    oh-my-zsh \
-    procps \
-    rsync \
-    shadow \
-    sudo \
     the_silver_searcher \
+    # misc
+    ca-certificates \
+    # nice to have zsh setup
+    fzf \
+    oh-my-zsh \
+    shadow \
     zsh \
     zsh-vcs
 
