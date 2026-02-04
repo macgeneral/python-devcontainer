@@ -87,7 +87,8 @@ RUN \
   --mount=type=bind,source=uv.lock,target="${BASE_DIR}/uv.lock" \
   --mount=type=bind,source=.git,target="${BASE_DIR}/.git" \
   --mount=type=bind,source=src,target="${BASE_DIR}/src" \
-  GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="safe.directory" GIT_CONFIG_VALUE_0="${BASE_DIR}" uv sync --no-default-groups || true
+  GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="safe.directory" GIT_CONFIG_VALUE_0="${BASE_DIR}" \
+  uv sync --no-default-groups || true
 
 
 FROM build_image AS dev_image

@@ -44,10 +44,14 @@ Repository = "https://github.com/macgeneral/python-devcontainer.git"
 Issues = "https://github.com/macgeneral/python-devcontainer/issues"
 
 [tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true }}]
 default-groups = ["docs", "test"]
 
 [tool.uv.sources]
 example = { path = "src/example", editable = true }
+
+[tool.uv-dynamic-versioning]
+fallback-version = "0.0.0"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/example"]
