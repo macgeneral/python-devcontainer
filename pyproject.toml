@@ -50,7 +50,7 @@ default-groups = ["docs", "test"]
 example = { path = "src/example", editable = true }
 
 [tool.hatch.build.targets.wheel]
-  packages = ["src/example"]
+packages = ["src/example"]
 
 [tool.hatch.version]
 source = "uv-dynamic-versioning"

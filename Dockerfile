@@ -23,9 +23,11 @@ ARG \
   UID=1000 \
   GID=1000
 
-# install procps as simple docker healthcheck
-RUN --mount=type=cache,target=/etc/apk/cache \
-  apk add procps-ng
+# update all packages and install procps as simple docker healthcheck
+RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
+  apk update \
+  && apk upgrade \
+  && apk add procps-ng
 
 # set timezone
 RUN ln -snf "/usr/share/zoneinfo/${TZ}" /etc/localtime \
@@ -42,7 +44,7 @@ RUN pip3 uninstall -y pip setuptools
 RUN mkdir -p \
   "${BASE_DIR}/mnt" \
   "${BASE_DIR}/src" \
-  "${BASE_DIR}/venv"
+  "${VIRTUAL_ENV}"
 
 # add lower privileged user and group, only assign the app directory to the user
 RUN addgroup -g ${GID} ${GROUP} \
@@ -69,28 +71,29 @@ COPY --from=ghcr.io/astral-sh/ty:latest --link /ty /usr/local/bin/
 COPY --from=ghcr.io/astral-sh/uv:latest --link /uv /uvx /usr/local/bin/
 # add requirements for dynamic versioning support
 USER root
-RUN --mount=type=cache,target=/etc/apk/cache \
+RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
   apk add git make
 USER ${USER}
-# add prek (pre-commit) and uv-dynamic-versioning
-RUN --mount=type=cache,target=/root/.cache \
+# add prek (pre-commit) and uv-dynamic-versioning & setup the app's virtual environment
+RUN --mount=type=cache,id="usercache",uid=${UID},gid=${GID},target="${BASE_DIR}/.cache" \
   uv tool install prek \
-  && uv tool install uv-dynamic-versioning
-# setup the app's virtual environment
-RUN --mount=type=cache,uid=${UID},gid=${GID},target="${BASE_DIR}/.cache" \
-  python3 -m venv --symlinks --without-pip "${VIRTUAL_ENV}"
-# install app dependencies, continue building the DevContainer if it fails
+  && uv tool install uv-dynamic-versioning \
+  && python3 -m venv --symlinks --without-pip "${VIRTUAL_ENV}"
+# install app dependencies, continue building the DevContainer if it fails, ignore permission mismatches between host and container
 RUN \
+  --mount=type=cache,id="usercache",uid=${UID},gid=${GID},target="${BASE_DIR}/.cache" \
   --mount=type=bind,source=pyproject.toml,target="${BASE_DIR}/pyproject.toml" \
   --mount=type=bind,source=README.md,target="${BASE_DIR}/README.md" \
   --mount=type=bind,source=uv.lock,target="${BASE_DIR}/uv.lock" \
-  uv sync --no-default-groups || true
+  --mount=type=bind,source=.git,target="${BASE_DIR}/.git" \
+  --mount=type=bind,source=src,target="${BASE_DIR}/src" \
+  GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="safe.directory" GIT_CONFIG_VALUE_0="${BASE_DIR}" uv sync --no-default-groups || true
 
 
 FROM build_image AS dev_image
 # install system dependencies for development and debugging inside a DevContainer
 USER root
-RUN --mount=type=cache,target=/etc/apk/cache \
+RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
   apk add \
     # required for VSCode
     bash \
@@ -141,18 +144,25 @@ CMD sleep infinity
 
 
 FROM base_image AS release
-
 # set file/folder ownership to root to prevent changes during runtime
-COPY --chown=0:${GID} --from=build_image --link "${BASE_DIR}" "${BASE_DIR}"
+COPY --chown=0:${GID} --from=build_image --link "${VIRTUAL_ENV}" "${VIRTUAL_ENV}"
 
-# ensure mount points are user writable
+# TODO: ensure your app is available and building wasn't skipped in build_image due to || true
+RUN which app
+
 USER root
+# ensure mount points are user writable
 RUN chown -R ${UID}:${GID} "${BASE_DIR}/mnt"
+# remove package manager in release image
+RUN apk --purge del apk-tools
+# apply additional image hardening
+RUN --mount=type=bind,source=.devcontainer/hardening.sh,target="/sbin/hardening.sh" \
+  hardening.sh
 USER ${USER}
 
 COPY --chown=0:${GID} --link ./src "${BASE_DIR}/src"
 
-# TODO: change command
+# TODO: change command if necessary
 CMD [ "app" ]
 
 # TODO: update the healthcheck according to your needs
