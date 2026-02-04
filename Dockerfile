@@ -62,7 +62,9 @@ ENV \
   UV_LINK_MODE=copy \
   UV_PROJECT_ENVIRONMENT="${VIRTUAL_ENV}"
 
-# install uv
+# install ruff, ty & uv
+COPY --from=ghcr.io/astral-sh/ruff:latest --link /ruff /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/ty:latest --link /ty /usr/local/bin/
 COPY --from=ghcr.io/astral-sh/uv:latest --link /uv /uvx /usr/local/bin/
 # add requirements for dynamic versioning support
 USER root
@@ -85,9 +87,6 @@ RUN \
 
 
 FROM build_image AS dev_image
-# install ruff & ty
-COPY --from=ghcr.io/astral-sh/ruff:latest --link /ruff /usr/local/bin/
-COPY --from=ghcr.io/astral-sh/ty:latest --link /ty /usr/local/bin/
 # install system dependencies for development and debugging inside a DevContainer
 USER root
 RUN --mount=type=cache,target=/etc/apk/cache \
