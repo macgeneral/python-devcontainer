@@ -13,7 +13,7 @@ ENV \
 # Python specific environment variables
 ENV VIRTUAL_ENV="${BASE_DIR}/venv"
 ENV \
-  PATH="${VIRTUAL_ENV}/bin:${PATH}" \
+  PATH="${VIRTUAL_ENV}/bin:${BASE_DIR}/.local/bin:${PATH}" \
   PYTHONDONTWRITEBYTECODE=1 \
   PYTHONPATH="${BASE_DIR}/src" \
   PYTHONUNBUFFERED=1
@@ -68,12 +68,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest --link /uv /uvx /usr/local/bin/
 USER root
 RUN --mount=type=cache,target=/etc/apk/cache \
   apk add git make
-RUN --mount=type=cache,target=/root/.cache \
-  uv pip install --system \
-    debugpy \
-    pre-commit \
-    uv-dynamic-versioning
 USER ${USER}
+# add prek (pre-commit) and uv-dynamic-versioning
+RUN --mount=type=cache,target=/root/.cache \
+  uv tool install prek \
+  && uv tool install uv-dynamic-versioning
 # setup the app's virtual environment
 RUN --mount=type=cache,uid=${UID},gid=${GID},target="${BASE_DIR}/.cache" \
   python3 -m venv --symlinks --without-pip "${VIRTUAL_ENV}"
@@ -132,6 +131,7 @@ RUN mkdir -p \
 ENV \
   RUFF_CACHE_DIR="${BASE_DIR}/.cache/ruff" \
   TERM="xterm" \
+  UV_NO_DEV=0 \
   WORKON_HOME="${VIRTUAL_ENV}"
 
 CMD sleep infinity

@@ -14,7 +14,7 @@
     // avoid reinstalling all extensions on each launch
     "source=vscodeCache,target=/opt/app/.vscode-server,type=volume"
   ],
-  "postAttachCommand": "pre-commit install && uv sync",
+  "postAttachCommand": "prek install && uv sync && prek run --all-files",
   "remoteUser": "worker",
   "customizations": {
     "vscode": {

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "Python-DevContainer"
 description = "Sample project using python, uv and an Alpine based DevContainer"
-version = "0.0.0"
+dynamic = ["version"]
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -51,6 +51,9 @@ example = { path = "src/example", editable = true }
 
 [tool.hatch.build.targets.wheel]
   packages = ["src/example"]
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
 [tool.pyright]
 include = ["src"]

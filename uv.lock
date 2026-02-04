@@ -623,7 +623,6 @@ wheels = [
 
 [[package]]
 name = "python-devcontainer"
-version = "0.0.0"
 source = { editable = "." }
 
 [package.dev-dependencies]

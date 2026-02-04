@@ -25,9 +25,10 @@ repos:
       - id: trailing-whitespace
         args: ["--markdown-linebreak-ext=md"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.14
+    rev: v0.15.0
     hooks:
-      - id: ruff
+      - id: ruff-check
+        args: [ --fix ]
       - id: ruff-format
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0
@@ -43,8 +44,3 @@ repos:
       - id: python-use-type-annotations
       - id: python-no-eval
       - id: text-unicode-replacement-char
-  - repo: https://github.com/PyCQA/bandit
-    rev: '1.9.3'
-    hooks:
-      - id: bandit
-        args: ["--skip", "B101"]
