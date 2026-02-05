@@ -25,7 +25,7 @@ ARG \
 
 # update all packages and install procps as simple docker healthcheck
 # trivy:ignore:DS-0025
-RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
+RUN --mount=type=cache,id="apkcache",target="/etc/apk/cache" \
   apk update \
   && apk upgrade \
   && apk add procps-ng
@@ -75,7 +75,7 @@ COPY --from=ghcr.io/aquasecurity/trivy:latest --link /usr/local/bin/trivy /usr/l
 # add requirements for dynamic versioning support
 USER root
 # trivy:ignore:DS-0025
-RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
+RUN --mount=type=cache,id="apkcache",target="/etc/apk/cache" \
   apk add git make
 USER ${USER}
 # add prek (pre-commit) and uv-dynamic-versioning & setup the app's virtual environment
@@ -86,11 +86,11 @@ RUN --mount=type=cache,id="usercache",uid=${UID},gid=${GID},target="${BASE_DIR}/
 # install app dependencies, continue building the DevContainer if it fails, ignore permission mismatches between host and container
 RUN \
   --mount=type=cache,id="usercache",uid=${UID},gid=${GID},target="${BASE_DIR}/.cache" \
-  --mount=type=bind,source=pyproject.toml,target="${BASE_DIR}/pyproject.toml" \
-  --mount=type=bind,source=README.md,target="${BASE_DIR}/README.md" \
-  --mount=type=bind,source=uv.lock,target="${BASE_DIR}/uv.lock" \
-  --mount=type=bind,source=.git,target="${BASE_DIR}/.git" \
-  --mount=type=bind,source=src,target="${BASE_DIR}/src" \
+  --mount=type=bind,source="pyproject.toml",target="${BASE_DIR}/pyproject.toml" \
+  --mount=type=bind,source="README.md",target="${BASE_DIR}/README.md" \
+  --mount=type=bind,source="uv.lock",target="${BASE_DIR}/uv.lock" \
+  --mount=type=bind,source=".git",target="${BASE_DIR}/.git" \
+  --mount=type=bind,source="src",target="${BASE_DIR}/src" \
   GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="safe.directory" GIT_CONFIG_VALUE_0="${BASE_DIR}" \
   uv sync --no-default-groups || true
 
@@ -99,7 +99,7 @@ FROM build_image AS dev_image
 # install system dependencies for development and debugging inside a DevContainer
 USER root
 # trivy:ignore:DS-0025
-RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
+RUN --mount=type=cache,id="apkcache",target="/etc/apk/cache" \
   apk add \
     # required for VSCode
     bash \
@@ -162,7 +162,7 @@ RUN chown -R ${UID}:${GID} "${BASE_DIR}/mnt"
 # remove package manager in release image
 RUN apk --purge del apk-tools
 # apply additional image hardening
-RUN --mount=type=bind,source=.devcontainer/security/hardening.sh,target="/sbin/hardening.sh" \
+RUN --mount=type=bind,source=".devcontainer/security/hardening.sh",target="/sbin/hardening.sh" \
   hardening.sh
 USER ${USER}
 
