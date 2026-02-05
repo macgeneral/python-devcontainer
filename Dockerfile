@@ -24,6 +24,7 @@ ARG \
   GID=1000
 
 # update all packages and install procps as simple docker healthcheck
+# trivy:ignore:DS-0025
 RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
   apk update \
   && apk upgrade \
@@ -69,8 +70,11 @@ ENV \
 COPY --from=ghcr.io/astral-sh/ruff:latest --link /ruff /usr/local/bin/
 COPY --from=ghcr.io/astral-sh/ty:latest --link /ty /usr/local/bin/
 COPY --from=ghcr.io/astral-sh/uv:latest --link /uv /uvx /usr/local/bin/
+# install trivy
+COPY --from=ghcr.io/aquasecurity/trivy:latest --link /usr/local/bin/trivy /usr/local/bin/
 # add requirements for dynamic versioning support
 USER root
+# trivy:ignore:DS-0025
 RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
   apk add git make
 USER ${USER}
@@ -94,6 +98,7 @@ RUN \
 FROM build_image AS dev_image
 # install system dependencies for development and debugging inside a DevContainer
 USER root
+# trivy:ignore:DS-0025
 RUN --mount=type=cache,id="apkcache",target=/etc/apk/cache \
   apk add \
     # required for VSCode
@@ -157,7 +162,7 @@ RUN chown -R ${UID}:${GID} "${BASE_DIR}/mnt"
 # remove package manager in release image
 RUN apk --purge del apk-tools
 # apply additional image hardening
-RUN --mount=type=bind,source=.devcontainer/hardening.sh,target="/sbin/hardening.sh" \
+RUN --mount=type=bind,source=.devcontainer/security/hardening.sh,target="/sbin/hardening.sh" \
   hardening.sh
 USER ${USER}
 

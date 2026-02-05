@@ -1,0 +1,36 @@
+ignorefile: .trivyignore.yaml
+
+scanners:
+  - vuln # Vulnerability scanning
+  - misconfig # Misconfiguration scanning
+  - secret # Secret scanning
+  - license # License scanning (if supported)
+
+pkg:
+  # Vulnerability types to detect
+  types:
+    - os # Operating system vulnerabilities
+    - library # Library/package vulnerabilities
+
+  # Severity levels to report
+  severity:
+    - CRITICAL
+    - HIGH
+
+  # Skip files without fixes
+  skip-files:
+    - 'tests/**'
+    - 'test_*.py'
+
+secret:
+  # Severity levels for secrets
+  severity:
+    - CRITICAL
+    - HIGH
+    - MEDIUM
+
+  # Skip certain paths
+  skip-files:
+    - '.git/**'
+    - 'node_modules/**'
+    - '**/*.md'

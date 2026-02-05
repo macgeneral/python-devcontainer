@@ -44,3 +44,17 @@ repos:
       - id: python-use-type-annotations
       - id: python-no-eval
       - id: text-unicode-replacement-char
+  - repo: local
+    hooks:
+      - id: trivy-fs
+        name: trivy file system scan
+        entry: trivy fs --config .devcontainer/security/trivy.yaml --include-dev-deps --exit-code 1 .
+        language: system
+        pass_filenames: false
+        stages: [commit]
+      - id: trivy-config
+        name: trivy IaC scan
+        entry: trivy config --config .devcontainer/security/trivy.yaml --exit-code 1 .
+        language: system
+        pass_filenames: false
+        stages: [commit]

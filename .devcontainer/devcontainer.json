@@ -19,6 +19,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "aquasecurityofficial.trivy-vulnerability-scanner@1.8.11",
         "astral-sh.ty@2026.8.0",
         "charliermarsh.ruff@2026.34.0",
         "esbenp.prettier-vscode@12.3.0",
@@ -80,7 +81,13 @@
       "editor.formatOnSave": false,
       "editor.formatOnType": false,
       "python.analysis.autoImportCompletions": true,
-      "dev.containers.experimentalLockfile": true
+      "dev.containers.experimentalLockfile": true,
+      "trivy.binaryPath": "/usr/local/bin/trivy",
+      "trivy.useConfigFile": true,
+      "trivy.configFilePath": "./security/trivy.yaml",
+      "trivy.useIgnoreFile": true,
+      "trivy.ignoreFilePath": "../.trivyignore.yaml",
+      "trivy.useAquaPlatform": false
     }
   }
 }
