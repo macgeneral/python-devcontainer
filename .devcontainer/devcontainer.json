@@ -8,12 +8,12 @@
     "target": "dev_image"
   },
   "mounts": [
-    "source=${localWorkspaceFolder}/.devcontainer/config/.zshrc,target=/opt/app/.zshrc,type=bind",
     // container caches
     "source=linuxCache,target=/opt/app/.cache,type=volume",
     // avoid reinstalling all extensions on each launch
     "source=vscodeCache,target=/opt/app/.vscode-server,type=volume"
   ],
+  "postStartCommand": "ln -sfv \"${containerWorkspaceFolder}/.devcontainer/config/.zshrc\" \"${HOME}/.zshrc\"",
   "postAttachCommand": "prek install -q & uv sync -q || uv_exit=$?; prek run --all-files -q; exit $uv_exit",
   "remoteUser": "worker",
   "customizations": {
