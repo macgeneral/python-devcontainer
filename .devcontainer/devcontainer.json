@@ -1,8 +1,8 @@
 {
   "name": "Docker Dev Container",
+  "dockerFile": "../Dockerfile",
   "build": {
     "context": "../",
-    "dockerfile": "../Dockerfile",
     "image": "python-devcontainer:dev",
     "pull": false,
     "target": "dev_image"
